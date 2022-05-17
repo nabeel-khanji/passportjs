@@ -1,0 +1,40 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+nav {
+  background-color: #ffb082;
+  justify-content: center;
+  text-align: right;
+  padding: 2rem;
+}
+nav a {
+  border: 1px solid #bfbfbf;
+
+  background-color: rgba(255, 255, 255, 0.554);
+  box-shadow: 10px 10px 5px #aaaaaa59;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin: 1rem;
+  font-size: 1.3rem;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: #ffb082;
+  font-weight: bolder;
+  text-decoration: none;
+}
+header {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('https://www.w3schools.com/cssref/pulpitrock.jpg');
+  justify-content: center;
+  display: flex;
+  padding: 5rem;
+}
+header div {
+  background-color: #bfbfbf7e;
+  padding: 10rem 40rem 10rem 40rem ;
+}
