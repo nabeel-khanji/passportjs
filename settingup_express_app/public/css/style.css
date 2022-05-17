@@ -36,5 +36,26 @@ header {
 }
 header div {
   background-color: #bfbfbf7e;
-  padding: 10rem 40rem 10rem 40rem ;
+  padding: 10rem 40rem 10rem 40rem;
 }
+main div a {
+    background-color: #fe7575;
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 1rem;
+    box-shadow: 5px 5px 5px #aaaaaa59;    transition: 1s;
+
+  }
+  main div a:hover {
+    background-color: rgb(255, 255, 255);
+    color: #fe7575;
+    text-decoration: none;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 1rem; 
+     box-shadow: 10px 10px 5px #aaaaaa59;
+    transition: 1s;
+  }
+    
