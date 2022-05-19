@@ -1,6 +1,7 @@
 const express = require("express");
 const hbs= require("hbs");
 const router = require("../routes/routes");
+// const passportSetup= require("../config/passport-setup")
 const path = require("path");
 const app = express();
 const port = process.env.PORT || 8000;
