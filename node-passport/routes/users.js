@@ -2,17 +2,18 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
+const { ensureAuthenticated ,forwardAuthenticated} = require("../config/auth");
 
 //User model
 const User = require("../model/User");
 
 //Login Page
-router.get("/login", (req, res) => {
+router.get("/login",forwardAuthenticated, (req, res) => {
   res.render("login");
 });
 
 //Register Page
-router.get("/register", (req, res) => {
+router.get("/register",forwardAuthenticated, (req, res) => {
   res.render("register");
 });
 
