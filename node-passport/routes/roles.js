@@ -1,20 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const passport = require("passport");
+
+const { ensureAuthenticated ,forwardAuthenticated} = require("../config/auth");
 
 //Role model
 const Role = require("../model/Role");
 const User = require("../model/User");
 
-router.get('/users', function(req, res) {
+router.get('/users',ensureAuthenticated, function(req, res) {
     User.find({}).exec(function(err, produtos) {
         if (err) throw err;
         res.render('users', { data: produtos});
     });
 });
 
-router.get('/roles', function(req, res) {
+router.get('/roles', ensureAuthenticated,function(req, res) {
     Role.find({}).exec(function(err, produtos) {
         if (err) throw err;
         res.render('roles', { data: produtos});
@@ -24,12 +24,12 @@ router.get('/roles', function(req, res) {
 
 
 //Role Page
-router.get("/addrole", (req, res) => {
+router.get("/addrole",ensureAuthenticated, (req, res) => {
   res.render("addrole");
 });
 
 //RoleAdd Handle
-router.post("/roles", (req, res) => {
+router.post("/roles", ensureAuthenticated,(req, res) => {
   const { name, slug } = req.body;
   let errors = [];
   //Check required fields
@@ -60,7 +60,7 @@ router.post("/roles", (req, res) => {
         if (user) {
           //User exists
           errors.push({ msg: "Role is already registered" });
-          res.render("roles", {
+          res.render("addrole", {
             errors,
             name,
             slug,
