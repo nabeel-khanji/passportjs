@@ -4,6 +4,7 @@ const expressLayotus = require("express-ejs-layouts");
 const flash = require("connect-flash");
 const session = require("express-session");
 const passport = require("passport");
+const path = require("path");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -35,10 +36,12 @@ app.use(
   })
 );
 
+//Public Path Setup
+app.use(express.static(path.join(__dirname,"../public")));
+
 //Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 //Connect flash
 app.use(flash());
@@ -54,6 +57,7 @@ app.use((req, res, next) => {
 //Routes
 app.use("/", require("../routes/index"));
 app.use("/users", require("../routes/users"));
+app.use("/dashboard", require("../routes/roles"));
 
 app.listen(port, () => {
   console.log(`listening to the port: ${port}!`);
