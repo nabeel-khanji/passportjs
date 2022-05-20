@@ -2,8 +2,9 @@
     <% console.log(data); %> 
   <tbody>
     <tr>
-      <td><%= data[i]._id %></td>
-      <td><%= data[i].name %></td>
+      <td><%= data[i]._id ??"Null"%></td>
+      <td><%= data[i].name??"Null" %></td>
+      <td><%= data[i].email??"Null" %></td>
       <td><%= data[i].password??"Null" %></td>
       <td><%= data[i].slug??"Null" %></td>
       

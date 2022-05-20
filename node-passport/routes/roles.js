@@ -14,6 +14,7 @@ router.get('/users',ensureAuthenticated, function(req, res) {
     });
 });
 
+// Role Table 
 router.get('/roles', ensureAuthenticated,function(req, res) {
     Role.find({}).exec(function(err, produtos) {
         if (err) throw err;
@@ -25,8 +26,11 @@ router.get('/roles', ensureAuthenticated,function(req, res) {
 
 //Role Page
 router.get("/addrole",ensureAuthenticated, (req, res) => {
-  res.render("addrole");
-});
+    res.render("addrole");
+  });//Role Page
+  router.get("/adduser",ensureAuthenticated, (req, res) => {
+    res.render("adduser");
+  });
 
 //RoleAdd Handle
 router.post("/roles", ensureAuthenticated,(req, res) => {
