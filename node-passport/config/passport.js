@@ -4,7 +4,8 @@ const bcrypt = require("bcryptjs");
 
 //Load User Model
 const User = require("../model/User");
-module.exports =  (passport)=> {
+const Role = require("../model/Role");
+module.exports = (passport) => {
   passport.use(
     new LocalStrategy(
       {
@@ -23,7 +24,25 @@ module.exports =  (passport)=> {
             bcrypt.compare(password, user.password, (err, isMatch) => {
               if (err) throw err;
               if (isMatch) {
-                return done(null, user);
+                console.log(user.role);
+                console.log(user);
+                Role.findOne({slug:"super_admin"}).then(role =>{
+                  console.log(role);
+                  if (user.role ==role._id ) {
+                    return done(null, user);
+                  }else{
+                    return done(null, false, {
+                      message: "Not a super admin",
+                    });
+                  }
+                }).catch(
+              (err)=>{
+                return done(null, false, {
+                  message: "Not a super admin",
+                });
+              }
+                )
+             
               } else {
                 return done(null, false, {
                   message: "Password incorrect",

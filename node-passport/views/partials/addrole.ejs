@@ -1,0 +1,27 @@
+<div class="row mt-5">
+    <div class="col-md-6 m-auto">
+      <div class="card card-body">
+        <h1 class="text-center mb-3">
+          <i class="fas fa-user-plus"></i> Add Role
+        </h1>
+        <%- include("./messages"); %>
+        <form action="/dashboard/roles" method="POST">
+          <div class="m-2 form-group">
+            <label for="name">Name</label>
+            <input
+              type="name"
+              id="name"
+              name="name"
+              class="form-control"
+              placeholder="Enter Name"
+              value="<%= typeof name != 'undefined' ? name : '' %>"
+            />
+          </div>
+       
+        <button type="submit" class="m-2 btn btn-primary btn-block">
+            Add Role
+          </button>
+        </form>
+     </div>
+    </div>
+  </div>
