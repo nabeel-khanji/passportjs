@@ -2,18 +2,18 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
-const { ensureAuthenticated ,forwardAuthenticated} = require("../config/auth");
+const { ensureAuthenticated, forwardAuthenticated } = require("../config/auth");
 
 //User model
 const User = require("../model/User");
 
 //Login Page
-router.get("/login",forwardAuthenticated, (req, res) => {
+router.get("/login", forwardAuthenticated, (req, res) => {
   res.render("login");
 });
 
 //Register Page
-router.get("/register",forwardAuthenticated, (req, res) => {
+router.get("/register", forwardAuthenticated, (req, res) => {
   res.render("register");
 });
 
@@ -97,13 +97,15 @@ router.post("/login", (req, res, next) => {
     failureRedirect: "/users/login",
     failureFlash: true,
   })(req, res, next);
+},
+);
+
+// Logout Handle
+router.get("/logout", (req, res) => {
+  req.logout();
+  req.flash("success_nsg", "You are logged out");
+  res.redirect("/users/login");
 });
 
-// Logout Handle       
-router.get('/logout',(req,res)=> {
-    req.logout();
-    req.flash("success_nsg",'You are logged out');
-    res.redirect('/users/login');
-});
 
 module.exports = router;
