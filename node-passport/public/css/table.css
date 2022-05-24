@@ -1,0 +1,11 @@
+.table-button {
+  margin-left: 0.5rem;
+  background-color: #6d7ecc76;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: solid 1px #6d7ecc;
+  color: rgb(255, 255, 255);
+}
+.table-button i {
+  color: rgb(255, 255, 255);
+}
