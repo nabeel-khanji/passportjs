@@ -9,3 +9,8 @@
 .table-button i {
   color: rgb(255, 255, 255);
 }
+.app-table{
+    color: #6d7ecc;
+    background-color: rgb(255, 255, 255);  border-radius: 1.5rem;
+padding: 2.5rem !important;
+}

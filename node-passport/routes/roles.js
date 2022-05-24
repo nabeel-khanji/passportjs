@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-
+const bcrypt = require("bcryptjs");
+const passport = require("passport");
 const { ensureAuthenticated, forwardAuthenticated } = require("../config/auth");
 
 //Role model
@@ -62,7 +63,6 @@ router.post("/editrole/:id", async (req, res) => {
       _id,
       {
         role: req.user.role,
-
         name: req.body.name,
         slug: req.body.name
           .toString()
@@ -73,10 +73,20 @@ router.post("/editrole/:id", async (req, res) => {
           .replace(/\-\-+/g, "_")
           .replace(/^-+/, "")
           .replace(/-+$/, ""),
-        can_create: req.body.can_create,
-        can_read: req.body.can_read,
-        can_update: req.body.can_update,
-        can_delete: req.body.can_delete,
+        permissions: {
+          role: {
+            role_can_create: req.body.role_can_create,
+            role_can_read: req.body.role_can_read,
+            role_can_update: req.body.role_can_update,
+            role_can_delete: req.body.role_can_delete,
+          },
+          user: {
+            user_can_create: req.body.user_can_create,
+            user_can_read: req.body.user_can_read,
+            user_can_update: req.body.user_can_update,
+            user_can_delete: req.body.user_can_delete,
+          },
+        },
       },
       {
         new: true,
@@ -101,7 +111,6 @@ router.get("/edituser/:id", ensureAuthenticated, (req, res) => {
         role: user.role,
         name: user.name,
         role: req.user.role,
-
         email: user.email,
         password: user.password,
         password2: user.password2,
@@ -121,6 +130,14 @@ router.post("/edituser/:id", async (req, res) => {
         email: req.body.email,
         password: req.body.password,
         password2: req.body.password2,
+        permissions: {
+          role: {
+            can_create: req.body.can_create,
+            can_read: req.body.can_read,
+            can_update: req.body.can_update,
+            can_delete: req.body.can_delete,
+          },
+        },
       },
       {
         new: true,
@@ -141,7 +158,18 @@ router.post("/edituser/:id", async (req, res) => {
 
 //Role Add Handle
 router.post("/addrole", ensureAuthenticated, (req, res) => {
-  const { name, slug, can_create, can_read, can_update, can_delete } = req.body;
+  const {
+    name,
+    slug,
+    user_can_create,
+    user_can_read,
+    user_can_update,
+    user_can_delete,
+    role_can_create,
+    role_can_read,
+    role_can_update,
+    role_can_delete,
+  } = req.body;
   let errors = [];
 
   //Check required fields
@@ -155,10 +183,14 @@ router.post("/addrole", ensureAuthenticated, (req, res) => {
       errors,
       name,
       slug,
-      can_create,
-      can_read,
-      can_update,
-      can_delete,
+      user_can_create,
+      user_can_read,
+      user_can_update,
+      user_can_delete,
+      role_can_create,
+      role_can_read,
+      role_can_update,
+      role_can_delete,
     });
   } else {
     // Validation passed
@@ -182,17 +214,32 @@ router.post("/addrole", ensureAuthenticated, (req, res) => {
             errors,
             name,
             slug,
-            can_create,
-            can_read,
-            can_update,
-            can_delete,
+            user_can_create,
+            user_can_read,
+            user_can_update,
+            user_can_delete,
+            role_can_create,
+            role_can_read,
+            role_can_update,
+            role_can_delete,
           });
         } else {
           const newRole = new Role({
             name,
             slug,
             permissions: {
-              role: { can_create, can_read, can_update, can_delete },
+              user: {
+                user_can_create,
+                user_can_read,
+                user_can_update,
+                user_can_delete,
+              },
+              role: {
+                role_can_create,
+                role_can_read,
+                role_can_update,
+                role_can_delete,
+              },
             },
           });
 
@@ -221,7 +268,14 @@ router.post("/addrole", ensureAuthenticated, (req, res) => {
 });
 //Role Add Handle
 router.post("/adduser", ensureAuthenticated, (req, res) => {
-  const { name, email, slug, password, password2 } = req.body;
+  const {
+    name,
+    email,
+    slug,
+    password,
+    password2,
+  
+  } = req.body;
   console.log(req.body);
   let errors = [];
 
@@ -229,6 +283,14 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
   if (!name || !email || !password || !password2) {
     console.log("Please fill in all fields");
     errors.push({ msg: "Please fill in all fields" });
+  } //Check passwords match
+  if (password !== password2) {
+    console.log("Passwords do not match");
+    errors.push({ msg: "Passwords do not match" });
+  }
+  if (password.length < 6) {
+    console.log("Password should be at least 6 characters");
+    errors.push({ msg: "Password should be at least 6 characters" });
   }
   if (errors.length > 0) {
     res.render("adduser", {
@@ -239,19 +301,12 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
       email,
       password,
       password2,
+  
     });
   } else {
     // Validation passed
     User.findOne({
-      slug: email
-        .toString()
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, "_")
-        .replace(/[^\w\-]+/g, "")
-        .replace(/\-\-+/g, "_")
-        .replace(/^-+/, "")
-        .replace(/-+$/, ""),
+      email: email,
     })
       .then((user) => {
         if (user) {
@@ -265,6 +320,7 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
             email,
             password,
             password2,
+       
           });
         } else {
           const newUser = new User({
@@ -272,27 +328,25 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
             slug,
             email,
             password,
-            password2,
+          
           });
 
-          // Set password to hashed
-          newUser.slug = newUser.email
-            .toString()
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, "_")
-            .replace(/[^\w\-]+/g, "")
-            .replace(/\-\-+/g, "_")
-            .replace(/^-+/, "")
-            .replace(/-+$/, "");
-          // Save role
-          newUser
-            .save()
-            .then((user) => {
-              req.flash("success_nsg", "User successfully added");
-              res.redirect("/dashboard");
-            })
-            .catch((err) => console.log(err));
+          //Hash Password
+          bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(newUser.password, salt, (err, hash) => {
+              if (err) throw err;
+              // Set password to hashed
+              newUser.password = hash;
+              // Save user
+              newUser
+                .save()
+                .then((user) => {
+                  req.flash("success_nsg", "Your user can now login");
+                  res.redirect("/dashboard");
+                })
+                .catch((err) => console.log(err));
+            });
+          });
         }
       })
       .catch();

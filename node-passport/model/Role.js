@@ -8,27 +8,35 @@ const RoleSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  permissions: 
-    {
-      role: 
-        {
-          can_create: {
-            type: Boolean,
-          },
-          can_read: {
-            type: Boolean,
-          },
-          can_update: {
-            type: Boolean,
-          },
-          can_delete: {
-            type: Boolean,
-          },
+  permissions: {
+    role: {
+      role_can_create: {
+        type: Boolean,
+      },
+      role_can_read: {
+        type: Boolean,
+      },
+      role_can_update: {
+        type: Boolean,
+      },
+      role_can_delete: {
+        type: Boolean,
+      },
+    },  user: {
+        user_can_create: {
+          type: Boolean,
         },
-      
-    },
-  
-
+        user_can_read: {
+          type: Boolean,
+        },
+        user_can_update: {
+          type: Boolean,
+        },
+        user_can_delete: {
+          type: Boolean,
+        },
+      },
+  },
   date: {
     type: Date,
     default: Date.now,

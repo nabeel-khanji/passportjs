@@ -7,40 +7,5 @@
   </div>
 </div>
 <div class="mt-4"><%- include("./partials/messages"); %></div>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Name</th>
-      <th scope="col">Slug</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <% for (var i = 0; i < data.length; i++) {%> <% console.log(data); %>
-  <tbody>
-    <tr>
-      <td><%= i +1 ??"Null"%></td>
-      <td><%= data[i].name??"Null" %></td>
-      <td><%= data[i].slug??"Null" %></td>
-      <td>
-        <form
-          style="display: inline-block"
-          action="<%=`/dashboard/roles/${data[i]._id}` %>"
-          method="GET"
-        >
-          <button class="table-button" type="submit">
-            Delete <i class="fa-solid fa-xmark"></i>
-          </button>
-        </form>
-        <a href="<%=`/dashboard/editrole/${data[i]._id}` %>">
-          <button class="table-button">
-            Edit
-            <i class="fa-solid fa-pen-to-square"></i>
-          </button>
-        </a>
-      </td>
-    </tr>
-  </tbody>
-  <%}%>
-</table>
-<%- include("./partials/dashboard_lower") %>
+<%- include("./partials/role_table") %>  <%-
+include("./partials/dashboard_lower") %>
