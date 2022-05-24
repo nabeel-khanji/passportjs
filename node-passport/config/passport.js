@@ -26,22 +26,22 @@ module.exports = (passport) => {
               if (isMatch) {
                 console.log(user.role);
                 console.log(user);
-                Role.findOne({slug:"super_admin"}).then(role =>{
-                  console.log(role);
-                  if (user.role ==role._id ) {
+                // Role.findOne({slug:"super_admin"}).then(role =>{
+                //   console.log(role);
+                //   if (user.role !=role._id ) {
                     return done(null, user);
-                  }else{
-                    return done(null, false, {
-                      message: "Not a super admin",
-                    });
-                  }
-                }).catch(
-              (err)=>{
-                return done(null, false, {
-                  message: "Not a super admin",
-                });
-              }
-                )
+                  // }else{
+                  //   return done(null, false, {
+                  //     message: "Not a super admin",
+                  //   });
+                  // }
+                // }).catch(
+              // (err)=>{
+              //   return done(null, false, {
+              //     message: "Not a super admin",
+              //   });
+              // }
+              //   )
              
               } else {
                 return done(null, false, {
