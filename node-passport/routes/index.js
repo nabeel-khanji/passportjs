@@ -8,6 +8,7 @@ router.get("/", forwardAuthenticated,(req, res) => {
 // Dashboard Page
 router.get("/dashboard",ensureAuthenticated, (req, res) => {
   res.render("dashboard",{
+    role:req.user.role,
       name:req.user.name
   });
 });
