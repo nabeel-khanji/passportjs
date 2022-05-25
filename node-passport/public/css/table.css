@@ -9,8 +9,17 @@
 .table-button i {
   color: rgb(255, 255, 255);
 }
-.app-table{
-    color: #6d7ecc;
-    background-color: rgb(255, 255, 255);  border-radius: 1.5rem;
-padding: 2.5rem !important;
+.app-table {
+  background-color: rgb(255, 255, 255);
+  border-radius: 1.5rem;
+  padding: 2.5rem !important;
+  box-shadow: 5px 5px 2.5px #aaaaaa7d;
+  transition: 0.5s;
+}
+.app-table:hover {
+  background-color: rgb(255, 255, 255);
+  border-radius: 1.5rem;
+  padding: 2.5rem !important;
+  box-shadow: 10px 10px 5px #aaaaaa7d;
+  transition: 0.5s;
 }
