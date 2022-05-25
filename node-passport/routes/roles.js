@@ -35,13 +35,17 @@ router.get("/addrole", ensureAuthenticated, (req, res) => {
 
 //Role Page
 router.get("/adduser", ensureAuthenticated, (req, res) => {
-  res.render("adduser", {
-    role: req.user.role,
+  Role.find({}).exec(function (err, roles) {
+    if (err) throw err;
+    res.render("adduser", {
+      role: req.user.role,
+      data: roles,
+    });
   });
 });
 router.get("/editrole/:id", ensureAuthenticated, (req, res) => {
   const _id = req.params.id;
-  const result = Role.findById(_id)
+  Role.findById(_id)
     .then((user) => {
       res.render("addrole", {
         role: user._id,
@@ -75,16 +79,16 @@ router.post("/editrole/:id", async (req, res) => {
           .replace(/-+$/, ""),
         permissions: {
           role: {
-            role_can_create: req.body.role_can_create,
-            role_can_read: req.body.role_can_read,
-            role_can_update: req.body.role_can_update,
-            role_can_delete: req.body.role_can_delete,
+            can_create: req.body.role_can_create ?? false,
+            can_read: req.body.role_can_read ?? false,
+            can_update: req.body.role_can_update ?? false,
+            can_delete: req.body.role_can_delete ?? false,
           },
           user: {
-            user_can_create: req.body.user_can_create,
-            user_can_read: req.body.user_can_read,
-            user_can_update: req.body.user_can_update,
-            user_can_delete: req.body.user_can_delete,
+            can_create: req.body.user_can_create ?? false,
+            can_read: req.body.user_can_read ?? false,
+            can_update: req.body.user_can_update ?? false,
+            can_delete: req.body.user_can_delete ?? false,
           },
         },
       },
@@ -105,55 +109,55 @@ router.post("/editrole/:id", async (req, res) => {
 });
 router.get("/edituser/:id", ensureAuthenticated, (req, res) => {
   const _id = req.params.id;
+
   User.findById(_id)
     .then((user) => {
-      res.render("adduser", {
-        role: user.role,
-        name: user.name,
-        role: req.user.role,
-        email: user.email,
-        password: user.password,
-        password2: user.password2,
-        _id: user._id,
-        update: "Update",
+      Role.find({}).exec(function (err, roles) {
+        if (err) throw err;
+
+        res.render("adduser", {
+          role: user.role,
+          name: user.name,
+          role: req.user.role,
+          email: user.email,
+          password: user.password,
+          password2: user.password2,
+          _id: user._id,
+          update: "Update",
+          data: roles,
+        });
       });
     })
     .catch();
 });
-router.post("/edituser/:id", async (req, res) => {
-  try {
-    const _id = req.params.id;
-    const result = await User.findByIdAndUpdate(
-      _id,
-      {
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password,
-        password2: req.body.password2,
-        permissions: {
-          role: {
-            can_create: req.body.can_create,
-            can_read: req.body.can_read,
-            can_update: req.body.can_update,
-            can_delete: req.body.can_delete,
-          },
+router.post("/edituser/:id", (req, res) => {
+  const _id = req.params.id;
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(req.body.password, salt, (err, hash) => {
+      // if (err) throw err;
+      // Set password to hashed
+      User.findByIdAndUpdate(
+        _id,
+        {
+          name: req.body.name,
+          email: req.body.email,
+          password: hash,
+          password2: hash,
+          role: req.body.role,
         },
-      },
-      {
-        new: true,
-      }
-    );
-    if (!result) {
-      return res.status(404).send();
-    } else {
-      req.flash("success_nsg", "User Updated successfully added");
-      res.redirect("/dashboard/users", {
-        role: req.user.role,
-      });
-    }
-  } catch (error) {
-    res.status(500).send(error);
-  }
+        {
+          new: true,
+        }
+      )
+        .then((user) => {
+          req.flash("success_nsg", "User Updated successfully added");
+          res.redirect("/dashboard/users");
+        })
+        .catch((err) => {
+          return res.status(404).send();
+        });
+    });
+  });
 });
 
 //Role Add Handle
@@ -229,16 +233,16 @@ router.post("/addrole", ensureAuthenticated, (req, res) => {
             slug,
             permissions: {
               user: {
-                user_can_create,
-                user_can_read,
-                user_can_update,
-                user_can_delete,
+                can_create: user_can_create ?? false,
+                can_read: user_can_read ?? false,
+                can_update: user_can_update ?? false,
+                can_delete: user_can_delete ?? false,
               },
               role: {
-                role_can_create,
-                role_can_read,
-                role_can_update,
-                role_can_delete,
+                can_create: role_can_create ?? false,
+                can_read: role_can_read ?? false,
+                can_update: role_can_update ?? false,
+                can_delete: role_can_delete ?? false,
               },
             },
           });
@@ -268,19 +272,12 @@ router.post("/addrole", ensureAuthenticated, (req, res) => {
 });
 //Role Add Handle
 router.post("/adduser", ensureAuthenticated, (req, res) => {
-  const {
-    name,
-    email,
-    slug,
-    password,
-    password2,
-  
-  } = req.body;
+  const { name, email, slug, password, password2, role } = req.body;
   console.log(req.body);
   let errors = [];
 
   //Check required fields
-  if (!name || !email || !password || !password2) {
+  if (!name || !email || !password || !password2 || !role) {
     console.log("Please fill in all fields");
     errors.push({ msg: "Please fill in all fields" });
   } //Check passwords match
@@ -293,15 +290,18 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
     errors.push({ msg: "Password should be at least 6 characters" });
   }
   if (errors.length > 0) {
-    res.render("adduser", {
-      role: req.user.role,
-      errors,
-      name,
-      slug,
-      email,
-      password,
-      password2,
-  
+    Role.find({}).exec(function (err, roles) {
+      if (err) throw err;
+      res.render("adduser", {
+        role: req.user.role,
+        errors,
+        name,
+        slug,
+        email,
+        password,
+        password2,
+        data: roles,
+      });
     });
   } else {
     // Validation passed
@@ -312,15 +312,18 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
         if (user) {
           //User exists
           errors.push({ msg: "User is already registered" });
-          res.render("adduser", {
-            role: req.user.role,
-            errors,
-            name,
-            slug,
-            email,
-            password,
-            password2,
-       
+          Role.find({}).exec(function (err, roles) {
+            if (err) throw err;
+            res.render("adduser", {
+              role: req.user.role,
+              errors,
+              name,
+              slug,
+              email,
+              password,
+              password2,
+              data: roles,
+            });
           });
         } else {
           const newUser = new User({
@@ -328,7 +331,7 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
             slug,
             email,
             password,
-          
+            role,
           });
 
           //Hash Password
