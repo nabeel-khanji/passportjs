@@ -50,6 +50,17 @@
               value="<%= typeof password2 != 'undefined' ? password2 : '' %>"
             />
           </div>
+          <div class="m-2 form-group">
+            <label for="cars">Choose Role</label>
+<br>
+<select  class="form-select"  name="role" id="role">
+  <% for (var i = 0; i < data.length; i++) {%> <% console.log(data); %>
+  <option value="<%= data[i]._id %> "><%= data[i].name  %> </option>
+  <%}%>
+
+</select>
+
+          </div>
           
           <button type="submit" class="m-2 btn btn-primary btn-block">
             <%= typeof update!='undefined'?update:"Add" %> User
