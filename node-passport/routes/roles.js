@@ -104,7 +104,7 @@ router.post("/editrole/:id", async (req, res) => {
     if (!result) {
       return res.status(404).send();
     } else {
-      req.flash("success_nsg", "Role Updated successfully added");
+      req.flash("success_msg", "Role Updated successfully added");
       res.redirect("/dashboard");
     }
   } catch (error) {
@@ -154,7 +154,7 @@ router.post("/edituser/:id", (req, res) => {
         }
       )
         .then((user) => {
-          req.flash("success_nsg", "User Updated successfully added");
+          req.flash("success_msg", "User Updated successfully added");
           res.redirect("/dashboard/users");
         })
         .catch((err) => {
@@ -265,7 +265,7 @@ router.post("/addrole", ensureAuthenticated, (req, res) => {
           newRole
             .save()
             .then((user) => {
-              req.flash("success_nsg", "Role successfully added");
+              req.flash("success_msg", "Role successfully added");
               res.redirect("/dashboard");
             })
             .catch((err) => console.log(err));
@@ -348,7 +348,7 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
               newUser
                 .save()
                 .then((user) => {
-                  req.flash("success_nsg", "Your user can now login");
+                  req.flash("success_msg", "Your user can now login");
                   res.redirect("/dashboard");
                 })
                 .catch((err) => console.log(err));
@@ -366,7 +366,7 @@ router.get("/roles/:id", async (req, res) => {
     if (!result) {
       return res.status(404).send();
     } else {
-      req.flash("success_nsg", "Role Deleted successfully added");
+      req.flash("success_msg", "Role Deleted successfully added");
       res.redirect("/dashboard/roles");
     }
   } catch (error) {
@@ -380,7 +380,7 @@ router.get("/users/:id", async (req, res) => {
     if (!result) {
       return res.status(404).send();
     } else {
-      req.flash("success_nsg", "Users Deleted successfully added");
+      req.flash("success_msg", "Users Deleted successfully added");
       res.redirect("/dashboard/users");
     }
   } catch (error) {

@@ -48,7 +48,7 @@ app.use(flash());
 
 //Global Vars
 app.use((req, res, next) => {
-  res.locals.success_nsg = req.flash("success_nsg");
+  res.locals.success_msg = req.flash("success_msg");
   res.locals.error_msg = req.flash("error_msg");
   res.locals.error = req.flash("error");
   next();
