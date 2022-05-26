@@ -46,15 +46,19 @@ router.get("/adduser", ensureAuthenticated, (req, res) => {
 router.get("/editrole/:id", ensureAuthenticated, (req, res) => {
   const _id = req.params.id;
   Role.findById(_id)
-    .then((user) => {
+    .then((role) => {
       res.render("addrole", {
-        role: user._id,
-        name: user.name,
-        _id: user._id,
-        can_create: user.can_create,
-        can_read: user.can_read,
-        can_update: user.can_update,
-        can_delete: user.can_delete,
+        role: role._id,
+        name: role.name,
+        _id: role._id,
+        user_can_create: role.permissions.role_can_create,
+        user_can_read: role.permissions.role_can_read,
+        user_can_update: role.permissions.role_can_update,
+        user_can_delete: role.permissions.role_can_delete,
+        role_can_create: role.permissions.role_can_create,
+        role_can_read: role.permissions.role_can_read,
+        role_can_update: role.permissions.role_can_update,
+        role_can_delete: role.permissions.role_can_delete,
         update: "Update",
       });
     })
@@ -114,14 +118,14 @@ router.get("/edituser/:id", ensureAuthenticated, (req, res) => {
     .then((user) => {
       Role.find({}).exec(function (err, roles) {
         if (err) throw err;
-
+        console.log(user.role);
         res.render("adduser", {
           role: user.role,
           name: user.name,
           role: req.user.role,
           email: user.email,
-          password: user.password,
-          password2: user.password2,
+          // password: user.password,
+          // password2: user.password2,
           _id: user._id,
           update: "Update",
           data: roles,
