@@ -21,15 +21,20 @@
             action="<%=`/dashboard/users/${data[i]._id}` %>"
             method="GET"
           >
+          <% if (role.user.can_delete==true) { %>
             <button class="table-button" type="submit">
               Delete <i class="fa-solid fa-xmark"></i>
             </button>
+            <% } %>
+
           </form>
           <a href="<%=`/dashboard/edituser/${data[i]._id}` %>">
-            <button class="table-button">
+            <% if (role.role.can_update==true) { %>
+              <button class="table-button">
               Edit
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
+            <% } %>
           </a>
         </td>
       </tr>
