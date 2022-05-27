@@ -5,6 +5,7 @@ const flash = require("connect-flash");
 const session = require("express-session");
 const passport = require("passport");
 const path = require("path");
+const Report = require("../model/Report");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -36,8 +37,17 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  console.log(req.headers.referer.replace("http://localhost:5000", ""));
+  Report({ route: req.headers.referer.replace("http://localhost:5000", "") })
+    .save()
+    .then(console.log("data save "))
+    .catch();
+  next();
+});
+
 //Public Path Setup
-app.use(express.static(path.join(__dirname,"../public")));
+app.use(express.static(path.join(__dirname, "../public")));
 
 //Passport middleware
 app.use(passport.initialize());
@@ -48,7 +58,7 @@ app.use(flash());
 
 //Global Vars
 app.use((req, res, next) => {
-  res.locals.success_msg = req.flash("success_msg");
+  res.locals.success_nsg = req.flash("success_nsg");
   res.locals.error_msg = req.flash("error_msg");
   res.locals.error = req.flash("error");
   next();
@@ -56,9 +66,8 @@ app.use((req, res, next) => {
 
 //Routes
 app.use("/", require("../routes/index"));
-app.use("/users", require("../routes/users"));
-app.use("/dashboard", require("../routes/roles"));
-
+app.use("/users", require("../routes/auth"));
+app.use("/dashboard", require("../routes/dashboard"));
 
 app.listen(port, () => {
   console.log(`listening to the port: ${port}!`);
