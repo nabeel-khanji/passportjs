@@ -19,21 +19,29 @@
           </div>
           <div class="m-2 form-group">
             <p>Role</p>
-            <input type="checkbox" id="role_can_create" name="role_can_create" value="true"<%= role_can_create==true?"checked":""%>>
+           <br> 
+           
+           <input type="checkbox" id="role_can_create" name="role_can_create" value="true"<%= typeof role_can_create !='undefined'? role_can_create==true?"checked":"":''%>>
             <label for="vehicle1"> Can Create</label>
-            <br>        <input type="checkbox" id="role_can_read" name="role_can_read" value="true" <%= role_can_read==true?"checked":""%>>
+            <br> 
+                   <input type="checkbox" id="role_can_read" name="role_can_read" value="true"<%= typeof role_can_read!='undefined'? role_can_read==true?"checked":"":''%>>
             <label for="vehicle2"> Can Read</label>
-            <br>        <input type="checkbox" id="role_can_update" name="role_can_update" value="true"<%= role_can_update==true?"checked":""%>>
+            <br> 
+                   <input type="checkbox" id="role_can_update" name="role_can_update" value="true"<%= typeof role_can_update!='undefined'? role_can_update==true?"checked":"":''%>>
             <label for="vehicle3"> Can Update</label>
-            <br>       <input type="checkbox" id="role_can_delete" name="role_can_delete" value="true"<%= role_can_delete==true?"checked":""%>>
+            <br> 
+                  <input type="checkbox" id="role_can_delete" name="role_can_delete" value="true"<%= typeof role_can_delete!='undefined'? role_can_delete==true?"checked":"":''%>>
             <label for="vehicle3"> Can Delete</label>      <p>User</p>
-            <input type="checkbox" id="user_can_create" name="user_can_create" value="true"<%= user_can_create==true"checked":""%>>
+            <input type="checkbox" id="user_can_create" name="user_can_create" value="true"<%= typeof user_can_create!='undefined'? user_can_create==true?"checked":"":''%>>
             <label for="vehicle1"> Can Create</label>
-            <br>        <input type="checkbox" id="user_can_read" name="user_can_read" value="true"<%= user_can_read==true?"checked":""%>>
+            <br> 
+                   <input type="checkbox" id="user_can_read" name="user_can_read" value="true"<%= typeof user_can_read!='undefined'? user_can_read==true?"checked":"":''%>>
             <label for="vehicle2"> Can Read</label>
-            <br>        <input type="checkbox" id="user_can_update" name="user_can_update" value="true"<%= user_can_update==true?"checked":""%>>
+            <br> 
+                   <input type="checkbox" id="user_can_update" name="user_can_update" value="true"<%= typeof user_can_update!='undefined'? user_can_update==true?"checked":"":''%>>
             <label for="vehicle3"> Can Update</label>
-            <br>       <input type="checkbox" id="user_can_delete" name="user_can_delete" value="true"<%= user_can_delete==true?"checked":""%>>
+            <br> 
+                  <input type="checkbox" id="user_can_delete" name="user_can_delete" value="true"<%= typeof user_can_delete!='undefined'? user_can_delete==true?"checked":"":''%>>
             <label for="vehicle3"> Can Delete</label>
           </div>
           <!-- <div class="m-2 form-group"> -->

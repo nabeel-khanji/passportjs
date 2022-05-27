@@ -1,5 +1,5 @@
 <div class="app-table">
-    <table class="table ">
+  <table class="table table-striped">
     <thead>
       <tr>
         <th scope="col">ID</th>
@@ -8,7 +8,7 @@
         <th scope="col">Action</th>
       </tr>
     </thead>
-    <% for (var i = 0; i < data.length; i++) {%> <% console.log(data); %>
+    <% for (var i = 0; i < data.length; i++) {%>
     <tbody>
       <tr>
         <td><%= i +1 ??"Null"%></td>
@@ -19,20 +19,24 @@
             style="display: inline-block"
             action="<%=`/dashboard/roles/${data[i]._id}` %>"
             method="GET"
-          > 
+          >
+            <% if (role.role.can_delete==true) { %>
             <button class="table-button" type="submit">
               Delete <i class="fa-solid fa-xmark"></i>
             </button>
+            <% } %>
           </form>
           <a href="<%=`/dashboard/editrole/${data[i]._id}` %>">
+            <% if (role.role.can_update==true) { %>
             <button class="table-button">
               Edit
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
+            <% } %>
           </a>
         </td>
       </tr>
     </tbody>
     <%}%>
   </table>
-  </div>
+</div>

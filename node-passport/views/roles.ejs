@@ -1,11 +1,12 @@
-<%- include("./partials/dashboard_upper") %>
-<div class="m-4 container">
-  <div class="row justify-content-end">
-    <div class="col-2">
-      <a href="/dashboard/addrole" class="btn btn-primary">Add Roles</a>
+<% if (role.role.can_create==true) { %>
+  <div class="m-4 container">
+    <div class="row justify-content-end">
+      <div class="col-2">
+        <a href="/dashboard/addrole" class="btn btn-primary">Add Roles</a>
+      </div>
     </div>
   </div>
-</div>
+<% } %> 
+
 <div class="mt-4"><%- include("./partials/messages"); %></div>
-<%- include("./partials/role_table") %>  <%-
-include("./partials/dashboard_lower") %>
+<%- include("./partials/role_table") %> 
