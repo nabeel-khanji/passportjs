@@ -55,12 +55,9 @@
 <br>
 <select  class="form-select"  name="role" id="role">
   <% for (var i = 0; i < data.length; i++) {%> 
-    <% console.log(data[i]._id); %> 
-    <% console.log(role); %>
-    <% console.log(data[i]._id==role); %> 
-     
+
     
-  <option  value="<%= data[i]._id %>" <%= data[i]._id==role?"selected":"" %> ><%= data[i].name  %> </option>
+  <option  value="<%= data[i]._id %>" <%= data[i]._id==role_id?"selected":"" %> ><%= data[i].name  %> </option>
   <%}%> 
 
 </select>
