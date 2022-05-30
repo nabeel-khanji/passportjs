@@ -18,9 +18,9 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="/css/dashboard_sidenav.css">
-    <link rel="stylesheet" href="/css/table.css">
-    
+    <link rel="stylesheet" href="/css/dashboard_sidenav.css" />
+    <link rel="stylesheet" href="/css/table.css" />
+
     <title>Node.js & Passport App</title>
   </head>
   <body>
@@ -32,5 +32,14 @@
       integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        console.log("data");
+        $("#report").DataTable();
+      });
+    </script>
   </body>
 </html>
