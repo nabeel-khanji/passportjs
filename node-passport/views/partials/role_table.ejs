@@ -1,5 +1,5 @@
 <div class="app-table">
-  <table class="table ">
+  <table id="datatable" class="table ">
     <thead>
       <tr>
         <th scope="col">ID</th>
@@ -8,8 +8,8 @@
         <th scope="col">Action</th>
       </tr>
     </thead>
-    <% for (var i = 0; i < data.length; i++) {%>
-    <tbody>
+    <tbody>    <% for (var i = 0; i < data.length; i++) {%>
+
       <tr>
         <td><%= i +1 ??"Null"%></td>
         <td><%= data[i].name??"Null" %></td>
@@ -35,8 +35,9 @@
             <% } %>
           </a>
         </td>
-      </tr>
+      </tr>    <%}%>
+
     </tbody>
-    <%}%>
   </table>
 </div>
+
