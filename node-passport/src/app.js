@@ -1,3 +1,4 @@
+require("dotenv").config();
 var mongoose = require("mongoose");
 const express = require("express");
 const expressLayotus = require("express-ejs-layouts");
@@ -26,7 +27,10 @@ app.use(expressLayotus);
 app.set("view engine", "ejs");
 
 //Body Parser
+app.use(express.json());
+
 app.use(express.urlencoded({ extended: false }));
+
 
 //Express Session
 app.use(

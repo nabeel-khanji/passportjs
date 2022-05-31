@@ -1,9 +1,13 @@
+require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const { ensureAuthenticated, forwardAuthenticated } = require("../config/auth");
-
+const Token = require("../model/Token");
+const sendEmail = require("../util/sendEmail");
+const crypto = require("crypto");
+const keys = require("../config/keys");
 //Role model
 const Role = require("../model/Role");
 
@@ -11,7 +15,6 @@ const Role = require("../model/Role");
 const User = require("../model/User");
 const Route = require("../model/Route");
 const Report = require("../model/Report");
-
 
 // User Table
 router.get("/users", ensureAuthenticated, function (req, res) {
@@ -32,7 +35,9 @@ router.get("/users", ensureAuthenticated, function (req, res) {
       });
     });
   });
-});router.get("/report", ensureAuthenticated, function (req, res) {
+});
+
+router.get("/report", ensureAuthenticated, function (req, res) {
   Report.find({}).exec(function (err, produtos) {
     if (err) throw err;
     Role.findOne({ _id: req.user.role }).then((role) => {
@@ -42,7 +47,7 @@ router.get("/users", ensureAuthenticated, function (req, res) {
         console.log(route.length);
         res.render("reports", {
           layout: "LayoutA",
-          route:route,
+          route: route,
           data: produtos,
           role: role.permissions,
         });
@@ -96,13 +101,14 @@ router.get("/adduser", ensureAuthenticated, (req, res) => {
       Route.find({}).then((route) => {
         console.log(route);
         console.log(route.length);
-       res.render("adduser", {
-        layout: "LayoutA",
-        route:route, 
-        role: role.permissions,
-        role_id: req.user.role,
-        data: roles,
-      });})
+        res.render("adduser", {
+          layout: "LayoutA",
+          route: route,
+          role: role.permissions,
+          role_id: req.user.role,
+          data: roles,
+        });
+      });
     });
   });
 });
@@ -379,7 +385,6 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
   const { name, email, slug, password, password2, role } = req.body;
   console.log(req.body);
   let errors = [];
-
   //Check required fields
   if (!name || !email || !password || !password2 || !role) {
     console.log("Please fill in all fields");
@@ -401,6 +406,7 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
         Route.find({}).then((route) => {
           console.log(route);
           console.log(route.length);
+          console.log(process.env.BASE_URL);
           res.render("adduser", {
             layout: "LayoutA",
             route: route,
@@ -442,7 +448,7 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
                   email,
                   password,
                   password2,
-                  data: roles,
+                  data: roles, 
                 });
               });
             });
@@ -466,8 +472,35 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
               newUser
                 .save()
                 .then((user) => {
-                  req.flash("success_nsg", "Your user can now login");
+                  Token({
+                    userId: user._id,
+                    token: crypto.randomBytes(32).toString("hex"),
+                  })
+                    .save()
+                    .then((token) => {
+                      console.log("token created");
+                      console.log(token);
+                      const url = `${process.env.BASE_URL}/users/${user._id}/verify/${token.token}`;
+                      console.log(url);
+                      // console.log(url);
+                      sendEmail(user.email, "Verify Email", url)
+                        .then((sendEmail) => {
+                          console.log("email send successfully");
+                          console.log(sendEmail);
+                        })
+                        .catch((err) => {
+                          console.log("email send failed");
+                          console.log(err);
+                        });
+                    })
+                    .catch((err) => {
+                      console.log("token not created"); console.log(err);
+                    });
 
+                  req.flash(
+                    "success_nsg",
+                    "An email send to your account please verify"
+                  );
                   res.redirect("/dashboard");
                 })
                 .catch((err) => console.log(err));
@@ -506,5 +539,6 @@ router.get("/users/:id", ensureAuthenticated, async (req, res) => {
     res.status(500).send(error);
   }
 });
+
 
 module.exports = router;
