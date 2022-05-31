@@ -57,7 +57,7 @@
   <% for (var i = 0; i < data.length; i++) {%> 
 
     
-  <option  value="<%= data[i]._id %>" <%= data[i]._id==role_id?"selected":"" %> ><%= data[i].name  %> </option>
+  <option  value="<%= data[i]._id %>" <%= typeof role_id!='undefined'?  data[i]._id==role_id?"selected":"":'' %> ><%= data[i].name  %> </option>
   <%}%> 
 
 </select>
