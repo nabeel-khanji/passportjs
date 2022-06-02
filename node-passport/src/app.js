@@ -8,7 +8,7 @@ const passport = require("passport");
 const path = require("path");
 const Report = require("../model/Report");
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 
 // Passport config
 require("../config/passport")(passport);
