@@ -15,8 +15,59 @@ const Role = require("../model/Role");
 const User = require("../model/User");
 const Route = require("../model/Route");
 const Report = require("../model/Report");
+const multer = require("multer");
 
+const Storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/img");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + "-" + uniqueSuffix + ".png");
+  },
+});
+
+const upload = multer({
+  storage: Storage,
+}).single("testImage");
 // User Table
+
+router.post("/editprofile", ensureAuthenticated, (req, res) => {
+  upload(req, res, (err) => {
+    console.log(req.file);
+
+    console.log(req.body);
+    if (err) {
+      console.log(err);
+    } else {
+      User.findByIdAndUpdate(
+        { _id: req.user._id },
+        {
+          image: {
+            data: `/img/${req.file.filename}`,
+            contentType: "image/png",
+          },
+          name: req.body.name,
+          publiccompany: req.body.company,
+          email: req.body.email,
+          address: req.body.address,
+          position: req.body.position,
+          mobile: req.body.mobile,
+          github: req.body.github,
+          website: req.body.website,
+          linkedin: req.body.linkedin,
+          twitter: req.body.twitter,
+        }
+      ).then((user) => {
+          req.flash("success_nsg", "Profile Updated successfully added");
+          res.redirect("/dashboard/editprofile");
+        })
+        .catch((err) => {
+          res.send(err);
+        });
+    }
+  });
+});
 router.get("/users", ensureAuthenticated, function (req, res) {
   User.find({}).exec(function (err, produtos) {
     if (err) throw err;
@@ -448,7 +499,7 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
                   email,
                   password,
                   password2,
-                  data: roles, 
+                  data: roles,
                 });
               });
             });
@@ -494,7 +545,8 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
                         });
                     })
                     .catch((err) => {
-                      console.log("token not created"); console.log(err);
+                      console.log("token not created");
+                      console.log(err);
                     });
 
                   req.flash(
@@ -510,6 +562,40 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
       })
       .catch();
   }
+});
+
+router.get("/profile", ensureAuthenticated, (req, res) => {
+  console.log(req.user);
+  Role.findOne({ _id: req.user.role }).then((role) => {
+    console.log(role.permissions);
+    Route.find({}).then((route) => {
+      console.log(route);
+      console.log(route.length);
+      res.render("profile", {
+        layout: "LayoutA",
+        route: route,
+        role: role.permissions,
+        user: req.user,
+      });
+    });
+  });
+});
+
+router.get("/editprofile", ensureAuthenticated, (req, res) => {
+  console.log(req.user);
+  Role.findOne({ _id: req.user.role }).then((role) => {
+    console.log(role.permissions);
+    Route.find({}).then((route) => {
+      console.log(route);
+      console.log(route.length);
+      res.render("editprofile", {
+        layout: "LayoutA",
+        route: route,
+        role: role.permissions,
+        user: req.user,
+      });
+    });
+  });
 });
 router.get("/roles/:id", ensureAuthenticated, async (req, res) => {
   try {
@@ -539,6 +625,5 @@ router.get("/users/:id", ensureAuthenticated, async (req, res) => {
     res.status(500).send(error);
   }
 });
-
 
 module.exports = router;
