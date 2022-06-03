@@ -1,4 +1,6 @@
 require("dotenv").config();
+const validator = require("validator");
+
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
@@ -34,58 +36,80 @@ const upload = multer({
 
 router.post("/editprofile", ensureAuthenticated, (req, res) => {
   upload(req, res, (err) => {
-    console.log(req.file);
-
-    console.log(req.body);
-    if (err) {
-      console.log(err);
+    console.log(req.body.email);
+    // if(!validator.isEmail(req.body.email)){
+    //   req.flash("valid_mobile", "email no is not valid");
+    //   res.redirect("/dashboard/editprofile");
+    // }
+    if (
+      !validator.isMobilePhone(req.body.mobile) ||
+      req.body.mobile.length < 11
+    ) {
+      req.flash("valid_mobile", "mobile no is not valid");
+      res.redirect("/dashboard/editprofile");
     } else {
-      User.findByIdAndUpdate(
-        { _id: req.user._id },
-        {
-          image: {
-            data: `/img/${req.file.filename}`,
-            contentType: "image/png",
-          },
-          name: req.body.name,
-          publiccompany: req.body.company,
-          email: req.body.email,
-          address: req.body.address,
-          position: req.body.position,
-          mobile: req.body.mobile,
-          github: req.body.github,
-          website: req.body.website,
-          linkedin: req.body.linkedin,
-          twitter: req.body.twitter,
-        }
-      ).then((user) => {
-          req.flash("success_nsg", "Profile Updated successfully added");
-          res.redirect("/dashboard/editprofile");
-        })
-        .catch((err) => {
-          res.send(err);
-        });
+      console.log(req.file);  
+      console.log(req.body);
+      if (err) {
+        console.log(err);
+      } else {
+        User.findByIdAndUpdate(
+          { _id: req.user._id },
+          {
+            image: {
+              data: `/img/${req.file.filename}`,
+              contentType: "image/png",
+            },
+            age: req.body.age,
+            name: req.body.name,
+            company: req.body.company,
+            email: req.body.email,
+            address: req.body.address,
+            position: req.body.position,
+            mobile: req.body.mobile,
+            github: req.body.github,
+            website: req.body.website,
+            linkedin: req.body.linkedin,
+            twitter: req.body.twitter,
+          }
+        )
+          .then((user) => {
+            req.flash("success_nsg", "Profile Updated successfully added");
+            res.redirect("/dashboard/editprofile");
+          })
+          .catch((err) => {
+            res.send(err);
+          });
+      }
     }
   });
 });
 router.get("/users", ensureAuthenticated, function (req, res) {
-  User.find({}).exec(function (err, produtos) {
-    if (err) throw err;
-    Role.findOne({ _id: req.user.role }).then((role) => {
-      console.log(role.permissions);
-      Route.find({}).then((route) => {
-        console.log(route);
-        console.log(route.length);
-        res.render("users", {
-          layout: "LayoutA",
-          route,
-          route,
-          data: produtos,
-          role: role.permissions,
-        });
-      });
-    });
-  });
+  User.find({})
+    .exec(function (err, produtos) {
+      if (err) throw err;
+      Role.findOne({ _id: req.user.role })
+        .then((role) => {
+          console.log(role.permissions);
+          Route.find({})
+            .then((route) => {
+              console.log(route);
+              console.log(route.length);
+              res.render("users", {
+                layout: "LayoutA",
+                route,
+                route,
+                data: produtos,
+                role: role.permissions,
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 });
 
 router.get("/report", ensureAuthenticated, function (req, res) {
