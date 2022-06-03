@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  address: { type: String },
+  address: { type: String },age: { type: Number },
   image: {
     data: String,
     contentType: String,
