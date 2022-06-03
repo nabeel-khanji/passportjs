@@ -64,6 +64,9 @@ app.use(flash());
 app.use((req, res, next) => {
   res.locals.success_nsg = req.flash("success_nsg");
   res.locals.error_msg = req.flash("error_msg");
+  res.locals.valid_email = req.flash("valid_email");
+  res.locals.valid_mobile = req.flash("valid_mobile");
+  
   res.locals.error = req.flash("error");
   next();
 });
