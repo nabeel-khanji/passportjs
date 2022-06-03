@@ -1,32 +1,33 @@
 <div class="container">
   <h1>Edit Profile</h1>
   <hr />
-  <form enctype="multipart/form-data" action="/dashboard/editprofile" method="POST" class="form-horizontal" role="form">
-
-  <div class="row">
-    <!-- left column -->
-    <div class="col-md-3">
-      <div class="text-center">
-        <img src= <%= typeof user.image.data!='undefined'?user.image.data:
-        'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'%>
-        alt="avatar" class="rounded-circle img-fluid" style="width: 150px" />
-        <h6>Upload a different photo...</h6>
-
-        <input name="testImage" type="file" class="form-control" />
-      </div>
-    </div>
-
-    <!-- edit form column -->
-    <div class="col-md-9 personal-info">
-      <div class="mt-4">
-        <%- include("./partials/messages"); %>
-
+  <form
+    enctype="multipart/form-data"
+    action="/dashboard/editprofile"
+    method="POST"
+    class="form-horizontal"
+    role="form"
+  >
+    <div class="row">
+      <!-- left column -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <img src= <%= typeof user.image.data!='undefined'?user.image.data:
+          'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'%>
+          alt="avatar" class="rounded-circle img-fluid" style="width: 150px" />
+          <h6>Upload a different photo...</h6>
+          <input   name="testImage" type="file" class="form-control" />
+        </div>
       </div>
 
-      <h3>Personal info</h3>
+      <!-- edit form column -->
+      <div class="col-md-9 personal-info">
+        <div class="mt-4"><%- include("./partials/messages"); %></div>
 
+        <h3>Personal info</h3>
         <div class="form-group">
           <label class="col-lg-3 control-label">Full Name:</label>
+        
           <div class="col-lg-8">
             <input
               class="form-control"
@@ -42,14 +43,15 @@
           <div class="col-lg-8">
             <input
               class="form-control"
-              type="text"              name="company"
-
+              type="text"
+              name="company"
               value="<%= typeof user.company !='undefined'?user.company : ''  %>"
             />
           </div>
         </div>
         <div class="form-group">
           <label class="col-lg-3 control-label">Email:</label>
+          
           <div class="col-lg-8">
             <input
               class="form-control"
@@ -70,6 +72,17 @@
             />
           </div>
         </div>
+        <div class="form-group">
+          <label class="col-md-3 control-label">Age:</label>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              type="number"
+              name="age"
+              value="<%= typeof user.age !='undefined'?user.age : ''  %>"
+            />
+          </div>
+        </div>
 
         <div class="form-group">
           <label class="col-md-3 control-label">Designation:</label>
@@ -87,11 +100,12 @@
           <div class="col-md-8">
             <input
               class="form-control"
-              type="text"
+              type="number"
               name="mobile"
               value="<%= typeof user.mobile!='undefined'?user.mobile: ''  %>"
             />
-          </div>
+          </div><%- include("./partials/valid_msg"); %>
+          
         </div>
         <div class="form-group">
           <label class="col-md-3 control-label">Github:</label>
@@ -138,7 +152,7 @@
             />
           </div>
         </div>
-      
+
         <div class="form-group">
           <label class="col-md-3 control-label"></label>
           <div class="col-md-8">
@@ -147,8 +161,8 @@
             <input type="reset" class="btn btn-default" value="Cancel" />
           </div>
         </div>
+      </div>
     </div>
-  </div>
-</form>
+  </form>
 </div>
 <hr />
