@@ -41,14 +41,14 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  console.log(req.headers.referer.replace("http://localhost:5000", ""));
-  Report({ route: req.headers.referer.replace("http://localhost:5000", "") })
-    .save()
-    .then(console.log("data save "))
-    .catch();
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(req.headers.referer.replace("http://localhost:5000", ""));
+//   Report({ route: req.headers.referer.replace("http://localhost:5000", "") })
+//     .save()
+//     .then(console.log("data save "))
+//     .catch();
+//   next();
+// });
 
 //Public Path Setup
 app.use(express.static(path.join(__dirname, "../public")));
