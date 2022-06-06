@@ -1,10 +1,8 @@
 require("dotenv").config();
-const validator = require("validator");
-
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const passport = require("passport");
+const validator = require("validator");
 const { ensureAuthenticated, forwardAuthenticated } = require("../config/auth");
 const Token = require("../model/Token");
 const sendEmail = require("../util/sendEmail");
@@ -12,7 +10,6 @@ const crypto = require("crypto");
 const keys = require("../config/keys");
 //Role model
 const Role = require("../model/Role");
-
 //User model
 const User = require("../model/User");
 const Route = require("../model/Route");
@@ -35,53 +32,91 @@ const upload = multer({
 // User Table
 
 router.post("/editprofile", ensureAuthenticated, (req, res) => {
+  console.log(req.body);
+
   upload(req, res, (err) => {
-    console.log(req.body.email);
-    // if(!validator.isEmail(req.body.email)){
-    //   req.flash("valid_mobile", "email no is not valid");
-    //   res.redirect("/dashboard/editprofile");
-    // }
-    if (
-      !validator.isMobilePhone(req.body.mobile) ||
-      req.body.mobile.length < 11
-    ) {
-      req.flash("valid_mobile", "mobile no is not valid");
-      res.redirect("/dashboard/editprofile");
-    } else {
-      console.log(req.file);  
-      console.log(req.body);
-      if (err) {
-        console.log(err);
-      } else {
-        User.findByIdAndUpdate(
-          { _id: req.user._id },
-          {
-            image: {
-              data: `/img/${req.file.filename}`,
-              contentType: "image/png",
-            },
-            age: req.body.age,
-            name: req.body.name,
-            company: req.body.company,
-            email: req.body.email,
-            address: req.body.address,
-            position: req.body.position,
-            mobile: req.body.mobile,
-            github: req.body.github,
-            website: req.body.website,
-            linkedin: req.body.linkedin,
-            twitter: req.body.twitter,
-          }
-        )
-          .then((user) => {
-            req.flash("success_nsg", "Profile Updated successfully added");
-            res.redirect("/dashboard/editprofile");
-          })
-          .catch((err) => {
-            res.send(err);
-          });
-      }
+ 
+    console.log(req.file);
+    console.log(req.body);
+    let errors = [];
+    if (req.body.name.length < 3) {
+      errors.push({
+        msg: "name should be at least 3 characters",
+        param: "name",
+      });
     }
+    if (isNaN(req.body.age)) {
+      errors.push({
+        msg: "age is not a number",
+        param: "age",
+      });
+    }
+    if (!validator.isEmail(req.body.email)) {
+      errors.push({ msg: "not a valid email", param: "email" });
+    }
+    if (req.body.mobile.length < 11) {
+      errors.push({
+        msg: "name should be at least 11 characters",
+        param: "mobile",
+      });
+    }
+    // if (typeof req.file == "undefined") {
+    //   errors.push({
+    //     msg: "Please upload the image",
+    //     param: "image.data",
+    //   });
+    // }
+
+    if (errors.length > 0) {
+      console.log("asdasd");
+      console.log(errors);
+      User.findOne({ _id: req.user._id })
+        .then((user) => {
+          Role.findOne({ _id: req.user.role }).then((role) => {
+            Route.find({}).then((route) => {
+              res.render("editprofile", {
+                layout: "LayoutA",
+                valid_errors: errors,
+                user: user,
+                route: route,
+                role: role.permissions,
+              });
+            });
+          });
+        })
+        .catch();
+    } else {
+      User.findByIdAndUpdate(
+        { _id: req.user._id },
+        { 
+          image: {
+            data:
+              typeof req.file != "undefined"
+                ? `/img/${req.file.filename}`
+                : req.user.image.data, 
+            contentType: "image/png",
+          },
+          age: req.body.age,
+          name: req.body.name,
+          company: req.body.company,
+          email: req.body.email,
+          address: req.body.address,
+          position: req.body.position,
+          mobile: req.body.mobile,
+          github: req.body.github,
+          website: req.body.website,
+          linkedin: req.body.linkedin,
+          twitter: req.body.twitter,
+        }
+      )
+        .then((user) => {
+          req.flash("success_nsg", "Profile Updated successfully added");
+          res.redirect("/dashboard/editprofile");
+        })
+        .catch((err) => {
+          res.send(err);
+        });      }
+
   });
 });
 router.get("/users", ensureAuthenticated, function (req, res) {
@@ -98,18 +133,12 @@ router.get("/users", ensureAuthenticated, function (req, res) {
               res.render("users", {
                 layout: "LayoutA",
                 route,
-                route,
                 data: produtos,
                 role: role.permissions,
               });
             })
-            .catch((err) => {
-              console.log(err);
-            });
         })
-        .catch((err) => console.log(err));
     })
-    .catch((err) => console.log(err));
 });
 
 router.get("/report", ensureAuthenticated, function (req, res) {
