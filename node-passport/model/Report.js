@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
+import mongoose from "mongoose";
 const ReportSchema = mongoose.Schema({
   route: {
     type: String,
@@ -10,5 +10,5 @@ const ReportSchema = mongoose.Schema({
     default: Date.now,
   },
 });
-const Report = mongoose.model("Report", ReportSchema);
-module.exports = Report;
+const Report =mongoose. model("Report", ReportSchema);
+export default Report;

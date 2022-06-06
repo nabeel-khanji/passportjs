@@ -1,4 +1,4 @@
-var mongoose = require("mongoose");
+import mongoose from "mongoose";
 const RouteSchema = mongoose.Schema({
   name: {
     type: String,
@@ -8,13 +8,13 @@ const RouteSchema = mongoose.Schema({
     type: String,
     required: true,
   },
- slug:{
+  slug: {
     type: String,
- },
+  },
   date: {
     type: Date,
     default: Date.now,
   },
 });
 const Route = mongoose.model("Route", RouteSchema);
-module.exports = Route;
+export default Route;

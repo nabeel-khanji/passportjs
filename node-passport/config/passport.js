@@ -1,11 +1,11 @@
-const LocalStrategy = require("passport-local").Strategy;
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+import { Strategy as LocalStrategy } from "passport-local";
+import mongoose from "mongoose";
+import bcryptjs from "bcryptjs";
 
 //Load User Model
-const User = require("../model/User");
-const Role = require("../model/Role");
-module.exports = (passport) => {
+import User from "../model/User.js";
+import Role from "../model/Role.js";
+export default (passport) => {
   passport.use(
     new LocalStrategy(
       {
@@ -21,7 +21,7 @@ module.exports = (passport) => {
               });
             }
             // Match password
-            bcrypt.compare(password, user.password, (err, isMatch) => {
+            bcryptjs.compare(password, user.password, (err, isMatch) => {
               if (err) throw err;
               if (isMatch) {
                 console.log(user.role);
@@ -29,7 +29,7 @@ module.exports = (passport) => {
                 // Role.findOne({slug:"super_admin"}).then(role =>{
                 //   console.log(role);
                 //   if (user.role !=role._id ) {
-                    return done(null, user);
+                    return done(null, user);  
                   // }else{
                   //   return done(null, false, {
                   //     message: "Not a super admin",

@@ -1,20 +1,27 @@
-require("dotenv").config();
-var mongoose = require("mongoose");
-const express = require("express");
-const expressLayotus = require("express-ejs-layouts");
-const flash = require("connect-flash");
-const session = require("express-session");
-const passport = require("passport");
-const path = require("path");
-const Report = require("../model/Report");
+import dotenv from "dotenv";
+dotenv.config();
+import mongoose from "mongoose";
+import express from "express";
+import expressLayotus from "express-ejs-layouts";
+import flash from "connect-flash";
+import session from "express-session";
+import passport from "passport";
+import { join } from "path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+import Report from "../model/Report.js";
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5000;
 
 // Passport config
-require("../config/passport")(passport);
+import passpoertconfig from "../config/passport.js";
+passpoertconfig(passport);
+
+// require("../config/passport")(passport);
 
 //DB Config
-const db = require("../config/keys").MongoURI;
+import { MongoURI as db } from "../config/keys.js";
 
 //Connect to MongoDB
 mongoose
@@ -31,7 +38,6 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
 
-
 //Express Session
 app.use(
   session({
@@ -42,7 +48,6 @@ app.use(
 );
 
 // app.use((req, res, next) => {
-//   console.log(req.headers.referer.replace("http://localhost:5000", ""));
 //   Report({ route: req.headers.referer.replace("http://localhost:5000", "") })
 //     .save()
 //     .then(console.log("data save "))
@@ -51,7 +56,7 @@ app.use(
 // });
 
 //Public Path Setup
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(join(__dirname, "../public")));
 
 //Passport middleware
 app.use(passport.initialize());
@@ -64,18 +69,19 @@ app.use(flash());
 app.use((req, res, next) => {
   res.locals.success_nsg = req.flash("success_nsg");
   res.locals.error_msg = req.flash("error_msg");
-  res.locals.valid_email = req.flash("valid_email");
-  res.locals.valid_mobile = req.flash("valid_mobile");
-  
   res.locals.error = req.flash("error");
   next();
 });
+import indexRouter from "../routes/index.js";
+import authRouter from "../routes/auth.js";
+import dashboardRouter from "../routes/dashboard.js";
 
 //Routes
-app.use("/", require("../routes/index"));
-app.use("/users", require("../routes/auth"));
-app.use("/dashboard", require("../routes/dashboard"));
+app.use("/", indexRouter);
+app.use("/users", authRouter);
+app.use("/dashboard", dashboardRouter);
 
 app.listen(port, () => {
   console.log(`listening to the port: ${port}!`);
 });
+1

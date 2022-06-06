@@ -1,22 +1,21 @@
-require("dotenv").config();
-const express = require("express");
-const router = express.Router();
-const bcrypt = require("bcryptjs");
-const validator = require("validator");
-const { ensureAuthenticated, forwardAuthenticated } = require("../config/auth");
-const Token = require("../model/Token");
-const sendEmail = require("../util/sendEmail");
-const crypto = require("crypto");
-const keys = require("../config/keys");
+import express from "express";
+const dashboardRouter = express.Router();
+import bcrypt from "bcryptjs";
+import validator from "validator";
+import { ensureAuthenticated, forwardAuthenticated } from "../config/auth.js";
+import Token from "../model/Token.js";
+import sendEmail from "../util/sendEmail.js";
+import { randomBytes } from "crypto";
+// import keys from "../config/keys";
 //Role model
-const Role = require("../model/Role");
+import Role from "../model/Role.js";
 //User model
-const User = require("../model/User");
-const Route = require("../model/Route");
-const Report = require("../model/Report");
-const multer = require("multer");
+import User from "../model/User.js";
+import Route from "../model/Route.js";
+import Report from "../model/Report.js";
+import multer, { diskStorage } from "multer";
 
-const Storage = multer.diskStorage({
+const Storage = diskStorage({
   destination: function (req, file, cb) {
     cb(null, "public/img");
   },
@@ -31,11 +30,10 @@ const upload = multer({
 }).single("testImage");
 // User Table
 
-router.post("/editprofile", ensureAuthenticated, (req, res) => {
+dashboardRouter.post("/editprofile", ensureAuthenticated, (req, res) => {
   console.log(req.body);
 
   upload(req, res, (err) => {
- 
     console.log(req.file);
     console.log(req.body);
     let errors = [];
@@ -60,12 +58,12 @@ router.post("/editprofile", ensureAuthenticated, (req, res) => {
         param: "mobile",
       });
     }
-    // if (typeof req.file == "undefined") {
-    //   errors.push({
-    //     msg: "Please upload the image",
-    //     param: "image.data",
-    //   });
-    // }
+    if (typeof req.file == "undefined") {
+      errors.push({
+        msg: "Please upload the image",
+        param: "image.data",
+      });
+    }
 
     if (errors.length > 0) {
       console.log("asdasd");
@@ -88,12 +86,12 @@ router.post("/editprofile", ensureAuthenticated, (req, res) => {
     } else {
       User.findByIdAndUpdate(
         { _id: req.user._id },
-        { 
+        {
           image: {
             data:
               typeof req.file != "undefined"
                 ? `/img/${req.file.filename}`
-                : req.user.image.data, 
+                : req.user.image.data,
             contentType: "image/png",
           },
           age: req.body.age,
@@ -115,33 +113,30 @@ router.post("/editprofile", ensureAuthenticated, (req, res) => {
         })
         .catch((err) => {
           res.send(err);
-        });      }
-
+        });
+    }
   });
 });
-router.get("/users", ensureAuthenticated, function (req, res) {
-  User.find({})
-    .exec(function (err, produtos) {
-      if (err) throw err;
-      Role.findOne({ _id: req.user.role })
-        .then((role) => {
-          console.log(role.permissions);
-          Route.find({})
-            .then((route) => {
-              console.log(route);
-              console.log(route.length);
-              res.render("users", {
-                layout: "LayoutA",
-                route,
-                data: produtos,
-                role: role.permissions,
-              });
-            })
-        })
-    })
+dashboardRouter.get("/users", ensureAuthenticated, function (req, res) {
+  User.find({}).exec(function (err, produtos) {
+    if (err) throw err;
+    Role.findOne({ _id: req.user.role }).then((role) => {
+      console.log(role.permissions);
+      Route.find({}).then((route) => {
+        console.log(route);
+        console.log(route.length);
+        res.render("users", {
+          layout: "LayoutA",
+          route,
+          data: produtos,
+          role: role.permissions,
+        });
+      });
+    });
+  });
 });
 
-router.get("/report", ensureAuthenticated, function (req, res) {
+dashboardRouter.get("/report", ensureAuthenticated, function (req, res) {
   Report.find({}).exec(function (err, produtos) {
     if (err) throw err;
     Role.findOne({ _id: req.user.role }).then((role) => {
@@ -161,7 +156,7 @@ router.get("/report", ensureAuthenticated, function (req, res) {
 });
 
 // Role Table
-router.get("/roles", ensureAuthenticated, function (req, res) {
+dashboardRouter.get("/roles", ensureAuthenticated, function (req, res) {
   Role.find({}).exec(function (err, produtos) {
     if (err) throw err;
     Role.findOne({ _id: req.user.role }).then((role) => {
@@ -181,7 +176,7 @@ router.get("/roles", ensureAuthenticated, function (req, res) {
 });
 
 //Role Page
-router.get("/addrole", ensureAuthenticated, (req, res) => {
+dashboardRouter.get("/addrole", ensureAuthenticated, (req, res) => {
   Role.findOne({ _id: req.user.role }).then((role) => {
     console.log(role.permissions);
     Route.find({}).then((route) => {
@@ -197,7 +192,7 @@ router.get("/addrole", ensureAuthenticated, (req, res) => {
 });
 
 //Role Page
-router.get("/adduser", ensureAuthenticated, (req, res) => {
+dashboardRouter.get("/adduser", ensureAuthenticated, (req, res) => {
   Role.find({}).exec(function (err, roles) {
     if (err) throw err;
     Role.findOne({ _id: req.user.role }).then((role) => {
@@ -216,7 +211,7 @@ router.get("/adduser", ensureAuthenticated, (req, res) => {
     });
   });
 });
-router.get("/editrole/:id", ensureAuthenticated, (req, res) => {
+dashboardRouter.get("/editrole/:id", ensureAuthenticated, (req, res) => {
   const _id = req.params.id;
   Role.findById(_id)
     .then((user) => {
@@ -247,7 +242,7 @@ router.get("/editrole/:id", ensureAuthenticated, (req, res) => {
     })
     .catch();
 });
-router.post("/editrole/:id", async (req, res) => {
+dashboardRouter.post("/editrole/:id", async (req, res) => {
   try {
     const _id = req.params.id;
     const result = await Role.findByIdAndUpdate(
@@ -294,7 +289,7 @@ router.post("/editrole/:id", async (req, res) => {
     res.status(500).send(error);
   }
 });
-router.get("/edituser/:id", ensureAuthenticated, (req, res) => {
+dashboardRouter.get("/edituser/:id", ensureAuthenticated, (req, res) => {
   const _id = req.params.id;
 
   User.findById(_id)
@@ -326,7 +321,7 @@ router.get("/edituser/:id", ensureAuthenticated, (req, res) => {
     })
     .catch();
 });
-router.post("/edituser/:id", (req, res) => {
+dashboardRouter.post("/edituser/:id", (req, res) => {
   const _id = req.params.id;
   bcrypt.genSalt(10, (err, salt) => {
     bcrypt.hash(req.body.password, salt, (err, hash) => {
@@ -357,7 +352,7 @@ router.post("/edituser/:id", (req, res) => {
 });
 
 //Role Add Handle
-router.post("/addrole", ensureAuthenticated, (req, res) => {
+dashboardRouter.post("/addrole", ensureAuthenticated, (req, res) => {
   const {
     name,
     slug,
@@ -485,7 +480,7 @@ router.post("/addrole", ensureAuthenticated, (req, res) => {
   }
 });
 //Role Add Handle
-router.post("/adduser", ensureAuthenticated, (req, res) => {
+dashboardRouter.post("/adduser", ensureAuthenticated, (req, res) => {
   const { name, email, slug, password, password2, role } = req.body;
   console.log(req.body);
   let errors = [];
@@ -578,7 +573,7 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
                 .then((user) => {
                   Token({
                     userId: user._id,
-                    token: crypto.randomBytes(32).toString("hex"),
+                    token: randomBytes(32).toString("hex"),
                   })
                     .save()
                     .then((token) => {
@@ -617,7 +612,7 @@ router.post("/adduser", ensureAuthenticated, (req, res) => {
   }
 });
 
-router.get("/profile", ensureAuthenticated, (req, res) => {
+dashboardRouter.get("/profile", ensureAuthenticated, (req, res) => {
   console.log(req.user);
   Role.findOne({ _id: req.user.role }).then((role) => {
     console.log(role.permissions);
@@ -634,7 +629,7 @@ router.get("/profile", ensureAuthenticated, (req, res) => {
   });
 });
 
-router.get("/editprofile", ensureAuthenticated, (req, res) => {
+dashboardRouter.get("/editprofile", ensureAuthenticated, (req, res) => {
   console.log(req.user);
   Role.findOne({ _id: req.user.role }).then((role) => {
     console.log(role.permissions);
@@ -650,7 +645,7 @@ router.get("/editprofile", ensureAuthenticated, (req, res) => {
     });
   });
 });
-router.get("/roles/:id", ensureAuthenticated, async (req, res) => {
+dashboardRouter.get("/roles/:id", ensureAuthenticated, async (req, res) => {
   try {
     const _id = req.params.id;
     const result = await Role.findByIdAndDelete(_id);
@@ -664,7 +659,7 @@ router.get("/roles/:id", ensureAuthenticated, async (req, res) => {
     res.status(500).send(error);
   }
 });
-router.get("/users/:id", ensureAuthenticated, async (req, res) => {
+dashboardRouter.get("/users/:id", ensureAuthenticated, async (req, res) => {
   try {
     const _id = req.params.id;
     const result = await User.findByIdAndDelete(_id);
@@ -679,4 +674,4 @@ router.get("/users/:id", ensureAuthenticated, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default dashboardRouter;

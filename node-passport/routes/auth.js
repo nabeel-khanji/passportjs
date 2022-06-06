@@ -1,14 +1,14 @@
-const express = require("express");
-const router = express.Router();
-const bcrypt = require("bcryptjs");
-const passport = require("passport");
-const { ensureAuthenticated, forwardAuthenticated } = require("../config/auth");
-const crypto = require("crypto");
-const sendEmail = require("../util/sendEmail");
+import { Router } from "express";
+const router = Router();
+import bcrypt from "bcryptjs";
+import passport from "passport";
+import { ensureAuthenticated, forwardAuthenticated } from "../config/auth.js";
+import { randomBytes } from "crypto";
+import sendEmail from "../util/sendEmail.js";
 
 //User model
-const User = require("../model/User");
-const Token = require("../model/Token");
+import User from "../model/User.js";
+import Token from "../model/Token.js";
 
 //Login Page
 router.get("/login", forwardAuthenticated, (req, res) => {
@@ -53,7 +53,7 @@ router.post("/forgetpassword", (req, res) => {
       .then((user) => {
         Token({
           userId: user._id,
-          token: crypto.randomBytes(32).toString("hex"),
+          token: randomBytes(32).toString("hex"),
         })
           .save()
           .then((token) => {
@@ -131,7 +131,7 @@ router.post("/login", (req, res, next) => {
       if (user.verified) {
         
 
-        passport.authenticate("local", {
+        passport.   authenticate("local", {
           successRedirect: "/dashboard",
           failureRedirect: "/users/login",  
           failureFlash: true,
@@ -139,7 +139,7 @@ router.post("/login", (req, res, next) => {
       } else {
         Token({
           userId: user._id,
-          token: crypto.randomBytes(32).toString("hex"),
+          token: randomBytes(32).toString("hex"),
         })
           .save()
           .then((token) => {
@@ -200,8 +200,8 @@ router.get("/:id/resetpassword/:token", async (req, res) => {
 
 router.post("/:id/resetpassword/:token", (req, res) => {
   const _id = req.params.id;
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(req.body.password, salt, (err, hash) => {
+  bcrypt .genSalt(10, (err, salt) => {
+    bcrypt   .hash(req.body.password, salt, (err, hash) => {
       // if (err) throw err;
       // Set password to hashed
       User.findByIdAndUpdate(
@@ -242,4 +242,4 @@ router.get("/:id/verify/:token", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
