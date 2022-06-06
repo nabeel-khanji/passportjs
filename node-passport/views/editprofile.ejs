@@ -16,18 +16,17 @@
           'https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp'%>
           alt="avatar" class="rounded-circle img-fluid" style="width: 150px" />
           <h6>Upload a different photo...</h6>
-          <input   name="testImage" type="file" class="form-control" />
-        </div>
+          <input name="testImage" type="file" class="form-control" />
+        </div> <%- include("./partials/valid_msg",{name: "image.data"}); %>
       </div>
 
-      <!-- edit form column -->
-      <div class="col-md-9 personal-info">
-        <div class="mt-4"><%- include("./partials/messages"); %></div>
-
+      <!-- edit form column --> 
+      <div class="col-md-9 personal-info"> 
+        <%- include("./partials/messages"); %>
         <h3>Personal info</h3>
         <div class="form-group">
-          <label class="col-lg-3 control-label">Full Name:</label>
-        
+          <label for="name" class="col-lg-3 control-label">Full Name:</label>
+
           <div class="col-lg-8">
             <input
               class="form-control"
@@ -36,6 +35,7 @@
               value="<%= typeof user.name != 'undefined' ? user.name : '' %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "name"}); %>
         </div>
 
         <div class="form-group">
@@ -48,10 +48,11 @@
               value="<%= typeof user.company !='undefined'?user.company : ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "company"}); %>
         </div>
         <div class="form-group">
-          <label class="col-lg-3 control-label">Email:</label>
-          
+          <label for="email" class="col-lg-3 control-label">Email:</label>
+
           <div class="col-lg-8">
             <input
               class="form-control"
@@ -60,6 +61,7 @@
               value="<%= typeof user.email !='undefined'?user.email : ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "email"}); %>
         </div>
         <div class="form-group">
           <label class="col-md-3 control-label">Address:</label>
@@ -71,6 +73,7 @@
               value="<%= typeof user.address !='undefined'?user.address : ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "address"}); %>
         </div>
         <div class="form-group">
           <label class="col-md-3 control-label">Age:</label>
@@ -82,6 +85,7 @@
               value="<%= typeof user.age !='undefined'?user.age : ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "age"}); %>
         </div>
 
         <div class="form-group">
@@ -94,6 +98,7 @@
               value="<%= typeof user.position!='undefined'?user.position: ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "position"}); %>
         </div>
         <div class="form-group">
           <label class="col-md-3 control-label">Mobile:</label>
@@ -104,8 +109,8 @@
               name="mobile"
               value="<%= typeof user.mobile!='undefined'?user.mobile: ''  %>"
             />
-          </div><%- include("./partials/valid_msg"); %>
-          
+          </div>
+          <%- include("./partials/valid_msg",{name: "mobile"}); %>
         </div>
         <div class="form-group">
           <label class="col-md-3 control-label">Github:</label>
@@ -117,6 +122,7 @@
               value="<%= typeof user.github !='undefined'?user.github : ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "github"}); %>
         </div>
         <div class="form-group">
           <label class="col-md-3 control-label">Website:</label>
@@ -128,6 +134,7 @@
               value="<%= typeof user.website!='undefined'?user.website: ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "website"}); %>
         </div>
         <div class="form-group">
           <label class="col-md-3 control-label">Linkedin:</label>
@@ -139,6 +146,7 @@
               value="<%= typeof user.linkedin!='undefined'?user.linkedin: ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "linkedin"}); %>
         </div>
 
         <div class="form-group">
@@ -151,6 +159,7 @@
               value="<%= typeof user.twitter!='undefined'?user.twitter: ''  %>"
             />
           </div>
+          <%- include("./partials/valid_msg",{name: "twitter"}); %>
         </div>
 
         <div class="form-group">
